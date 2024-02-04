@@ -55,7 +55,6 @@ class CustomerTest {
     }
 
     @Test
-    @Disabled("надо удалить") // надо удалить
     @DisplayName("Сортировка по полю score, итерация по возрастанию")
     void scoreSortingTest() {
         // given
@@ -76,7 +75,7 @@ class CustomerTest {
         // when
         // подсказка:
         // a key-value mapping associated with the least key strictly greater than the given key, or
-        // null if there is no such key.
+        // null if there is no such keynextCustomer.
         Map.Entry<Customer, String> middleScore = customerService.getNext(new Customer(10, "Key", 20));
         // then
         assertThat(middleScore.getKey()).isEqualTo(customer1);
@@ -84,9 +83,9 @@ class CustomerTest {
         middleScore.getKey().setName("Vasy");
 
         // when
-        Map.Entry<Customer, String> biggestScore = customerService.getNext(customer1);
+        Map.Entry<Customer, String> biggestScore = customerService.getNext(customer3);
         // then
-        assertThat(biggestScore.getKey()).isEqualTo(customer3);
+        assertThat(biggestScore.getKey()).isEqualTo(customer1);
 
         // when
         Map.Entry<Customer, String> notExists = customerService.getNext(new Customer(100, "Not exists", 20000));
