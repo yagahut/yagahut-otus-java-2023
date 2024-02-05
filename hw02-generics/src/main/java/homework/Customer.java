@@ -1,13 +1,16 @@
 package homework;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Customer {
     private final long id;
-    private String name;
+    private static final Map<Long, String> name = new HashMap<>();
     private long scores;
 
     public Customer(long id, String name, long scores) {
         this.id = id;
-        this.name = name;
+        Customer.name.put(id, name);
         this.scores = scores;
     }
 
@@ -16,11 +19,11 @@ public class Customer {
     }
 
     public String getName() {
-        return name;
+        return name.get(this.id);
     }
 
     public void setName(String name) {
-        this.name = name;
+        Customer.name.put(this.id, name);
     }
 
     public long getScores() {
