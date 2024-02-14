@@ -4,5 +4,7 @@ dependencies {
     testImplementation ("org.assertj:assertj-core")
     testImplementation ("org.mockito:mockito-core")
     testImplementation ("org.mockito:mockito-junit-jupiter")
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
 }
 

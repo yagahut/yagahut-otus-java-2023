@@ -3,7 +3,7 @@ package homework;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Customer {
+public class Customer implements Cloneable{
     private final long id;
     private static final Map<Long, String> name = new HashMap<>();
     private long scores;
@@ -36,7 +36,7 @@ public class Customer {
 
     @Override
     public String toString() {
-        return "Customer{" + "id=" + id + ", name='" + name + '\'' + ", scores=" + scores + '}';
+        return "Customer{" + "id=" + id + ", name='" + name.get(this.id) + '\'' + ", scores=" + scores + '}';
     }
 
     @Override
@@ -47,6 +47,11 @@ public class Customer {
         Customer customer = (Customer) o;
 
         return id == customer.id;
+    }
+
+    @Override
+    protected Customer clone() throws CloneNotSupportedException {
+        return (Customer) super.clone();
     }
 
     @Override
