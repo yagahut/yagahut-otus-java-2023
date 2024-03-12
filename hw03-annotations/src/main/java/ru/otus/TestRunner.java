@@ -67,8 +67,8 @@ public class TestRunner {
     }
 
     @SneakyThrows
-    private void runBeforeMethod(Method before, Object instance) {
-        before.invoke(instance);
+    private void runBeforeMethod(Method beforeMethod, Object instance) {
+        beforeMethod.invoke(instance);
     }
 
     public Map<TestResultStatus, Long> runTestMethods(List<Method> testMethods, Class<?> clazz) {
