@@ -89,7 +89,7 @@ public class TestRunner {
     }
 
     public void runAfterMethods(List<Method> afterMethods, Class<?> clazz) {
-        afterMethods.forEach(it -> runBeforeMethod(it, ReflectionUtils.getNewInstance(clazz)));
+        afterMethods.forEach(it -> runAfterMethod(it, ReflectionUtils.getNewInstance(clazz)));
     }
 
     @SneakyThrows
