@@ -1,4 +1,4 @@
-package ru.otus.model;
+package ru.otus.model.statistics;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,9 +9,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TotalTestsStatistics {
+public class TestsStatistics {
     private List<String> classesUnderTest;
     private long totalTests;
     private long totalPassed;
     private long totalFailed;
+    private List<TestStatistics> testStatistics;
 }

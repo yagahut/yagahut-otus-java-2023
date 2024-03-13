@@ -1,11 +1,10 @@
 package ru.otus.service;
 
 import ru.otus.model.TestsResults;
-import ru.otus.model.TotalTestsStatistics;
+import ru.otus.model.statistics.TestsStatistics;
 
 import java.util.List;
 
 public interface DisplayService {
-    void displayTotalTestsStatistics(TotalTestsStatistics totalTestsStatistics);
-    void displayTestsResults(List<TestsResults> testsResults);
+    void displayStatistics(TestsStatistics totalTestsStatistics);
 }

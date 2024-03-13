@@ -5,8 +5,10 @@ import ru.otus.annotations.After;
 import ru.otus.annotations.Before;
 import ru.otus.annotations.Test;
 import ru.otus.exception.TestRunningException;
+import ru.otus.model.TestResult;
 import ru.otus.model.TestResultStatus;
 import ru.otus.model.TestsResults;
+import ru.otus.model.statistics.TestsStatistics;
 import ru.otus.service.DisplayService;
 import ru.otus.service.StatisticsService;
 import ru.otus.util.ReflectionUtils;
@@ -14,9 +16,6 @@ import ru.otus.util.ReflectionUtils;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class TestRunner {
 
@@ -34,8 +33,8 @@ public class TestRunner {
                         .map(this::run)
                         .toList();
 
-        displayService.displayTotalTestsStatistics(statisticsService.getTotalStatistics(testsResults));
-        displayService.displayTestsResults(testsResults);
+        TestsStatistics statistics = statisticsService.getStatistics(testsResults);
+        displayService.displayStatistics(statistics);
     }
 
     private TestsResults run(Class<?> clazz) {
@@ -45,14 +44,12 @@ public class TestRunner {
             List<Method> afterMethods = ReflectionUtils.getAnnotatedMethod(clazz, After.class);
 
             runBeforeMethods(beforeMethods, clazz);
-            var testResultMap = runTestMethods(testMethods, clazz);
+            var testResults = runTestMethods(testMethods, clazz);
             runAfterMethods(afterMethods, clazz);
 
             return new TestsResults(
                     clazz.getName(),
-                    testMethods.size(),
-                    testResultMap.getOrDefault(TestResultStatus.PASSED, 0L),
-                    testResultMap.getOrDefault(TestResultStatus.FAILED, 0L)
+                    testResults
             );
         } catch (Exception e) {
             throw new TestRunningException(
@@ -71,21 +68,26 @@ public class TestRunner {
         beforeMethod.invoke(instance);
     }
 
-    public Map<TestResultStatus, Long> runTestMethods(List<Method> testMethods, Class<?> clazz) {
+    public List<TestResult> runTestMethods(List<Method> testMethods, Class<?> clazz) {
         return testMethods
                 .stream()
                 .map(it -> runTestMethod(ReflectionUtils.getNewInstance(clazz), it))
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+                .toList();
     }
 
-    private TestResultStatus runTestMethod(Object instance, Method method) {
+    private TestResult runTestMethod(Object instance, Method method) {
+        TestResult result = new TestResult();
+        result.setClassName(instance.getClass().getName());
+        result.setMethodName(method.getName());
         try {
             method.invoke(instance);
-            return TestResultStatus.PASSED;
+            result.setStatus(TestResultStatus.PASSED);
         } catch (Exception e) {
             //TODO: add cause (failed message)
-            return TestResultStatus.FAILED;
+            result.setStatus(TestResultStatus.FAILED);
+            result.setErrMessage(e.getCause().getMessage());
         }
+        return result;
     }
 
     public void runAfterMethods(List<Method> afterMethods, Class<?> clazz) {

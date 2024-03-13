@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TestsResults {
+public class TestResult {
     private String className;
-    private List<TestResult> testResults;
+    private String methodName;
+    private TestResultStatus status;
+    private String errMessage;
 }
