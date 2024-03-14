@@ -5,7 +5,7 @@ import ru.otus.annotations.After;
 import ru.otus.annotations.Before;
 import ru.otus.annotations.Test;
 import ru.otus.exception.TestRunningException;
-import ru.otus.model.TestResult;
+import ru.otus.model.SingleTestResult;
 import ru.otus.model.TestResultStatus;
 import ru.otus.model.TestsResults;
 import ru.otus.model.statistics.TestsStatistics;
@@ -68,22 +68,21 @@ public class TestRunner {
         beforeMethod.invoke(instance);
     }
 
-    public List<TestResult> runTestMethods(List<Method> testMethods, Class<?> clazz) {
+    public List<SingleTestResult> runTestMethods(List<Method> testMethods, Class<?> clazz) {
         return testMethods
                 .stream()
                 .map(it -> runTestMethod(ReflectionUtils.getNewInstance(clazz), it))
                 .toList();
     }
 
-    private TestResult runTestMethod(Object instance, Method method) {
-        TestResult result = new TestResult();
+    private SingleTestResult runTestMethod(Object instance, Method method) {
+        SingleTestResult result = new SingleTestResult();
         result.setClassName(instance.getClass().getName());
         result.setMethodName(method.getName());
         try {
             method.invoke(instance);
             result.setStatus(TestResultStatus.PASSED);
         } catch (Exception e) {
-            //TODO: add cause (failed message)
             result.setStatus(TestResultStatus.FAILED);
             result.setErrMessage(e.getCause().getMessage());
         }

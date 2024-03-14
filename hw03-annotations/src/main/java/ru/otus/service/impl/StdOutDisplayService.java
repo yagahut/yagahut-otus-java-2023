@@ -1,6 +1,6 @@
 package ru.otus.service.impl;
 
-import ru.otus.model.statistics.TestStatistics;
+import ru.otus.model.statistics.SingleTestStatistics;
 import ru.otus.model.statistics.TestsStatistics;
 import ru.otus.service.DisplayService;
 
@@ -14,19 +14,18 @@ public class StdOutDisplayService implements DisplayService {
         System.out.println("total tests passed: %d".formatted(testsStatistics.getTotalPassed()));
         System.out.println("total tests failed: %d\n".formatted(testsStatistics.getTotalFailed()));
 
-        testsStatistics.getTestStatistics()
+        testsStatistics.getSingleTestStatistics()
                 .forEach(this::displayTestStatisticsRow);
     }
 
-    private void displayTestStatisticsRow(TestStatistics testStatistics) {
+    private void displayTestStatisticsRow(SingleTestStatistics singleTestStatistics) {
         var sb = new StringBuilder("""
                 ClassName: %s
                 MethodName: %s,
-                Status: %s
-                """.formatted(testStatistics.getClassName(), testStatistics.getMethodName(), testStatistics.getStatus()));
+                Status: %s""".formatted(singleTestStatistics.getClassName(), singleTestStatistics.getMethodName(), singleTestStatistics.getStatus()));
 
-        if(testStatistics.getErrMessage() != null) {
-            sb.append("Error message:\"%s\"".formatted(testStatistics.getErrMessage()));
+        if(singleTestStatistics.getErrMessage() != null) {
+            sb.append("\nError message:\"%s\"".formatted(singleTestStatistics.getErrMessage()));
         }
         sb.append("\n");
         System.out.println(sb);

@@ -11,5 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 public class TestsResults {
     private String className;
-    private List<TestResult> testResults;
+    private List<SingleTestResult> singleTestResults;
 }

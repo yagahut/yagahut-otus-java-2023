@@ -1,9 +1,9 @@
 package ru.otus.service;
 
-import ru.otus.model.TestResult;
+import ru.otus.model.SingleTestResult;
 import ru.otus.model.TestResultStatus;
 import ru.otus.model.TestsResults;
-import ru.otus.model.statistics.TestStatistics;
+import ru.otus.model.statistics.SingleTestStatistics;
 import ru.otus.model.statistics.TestsStatistics;
 
 import java.util.Collection;
@@ -20,16 +20,16 @@ public class StatisticsService {
 
         Map<TestResultStatus, Long> totalResultsMap =
                 testsResults.stream()
-                        .map(TestsResults::getTestResults)
+                        .map(TestsResults::getSingleTestResults)
                         .flatMap(Collection::stream)
-                        .collect(Collectors.groupingBy(TestResult::getStatus, Collectors.counting()));
+                        .collect(Collectors.groupingBy(SingleTestResult::getStatus, Collectors.counting()));
 
         long totalTests = totalResultsMap.values().stream()
                 .mapToLong(Long::longValue)
                 .sum();
 
-        List<TestStatistics> testStatistics = testsResults.stream()
-                .map(TestsResults::getTestResults)
+        List<SingleTestStatistics> singleTestStatistics = testsResults.stream()
+                .map(TestsResults::getSingleTestResults)
                 .flatMap(Collection::stream)
                 .map(this::mapToTestStatistics)
                 .toList();
@@ -39,17 +39,17 @@ public class StatisticsService {
                 totalTests,
                 totalResultsMap.getOrDefault(TestResultStatus.PASSED, 0L),
                 totalResultsMap.getOrDefault(TestResultStatus.FAILED, 0L),
-                testStatistics
+                singleTestStatistics
         );
 
     }
 
-    private TestStatistics mapToTestStatistics(TestResult testResult) {
-        return new TestStatistics(
-                testResult.getClassName(),
-                testResult.getMethodName(),
-                testResult.getStatus(),
-                testResult.getErrMessage()
+    private SingleTestStatistics mapToTestStatistics(SingleTestResult singleTestResult) {
+        return new SingleTestStatistics(
+                singleTestResult.getClassName(),
+                singleTestResult.getMethodName(),
+                singleTestResult.getStatus(),
+                singleTestResult.getErrMessage()
         );
     }
 

@@ -1,13 +1,14 @@
-package ru.otus.model;
+package ru.otus.model.statistics;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.otus.model.TestResultStatus;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TestResult {
+public class SingleTestStatistics {
     private String className;
     private String methodName;
     private TestResultStatus status;

@@ -14,5 +14,5 @@ public class TestsStatistics {
     private long totalTests;
     private long totalPassed;
     private long totalFailed;
-    private List<TestStatistics> testStatistics;
+    private List<SingleTestStatistics> singleTestStatistics;
 }
