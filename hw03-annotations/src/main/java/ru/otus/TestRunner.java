@@ -16,6 +16,8 @@ import ru.otus.util.ReflectionUtils;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class TestRunner {
 
@@ -43,9 +45,10 @@ public class TestRunner {
             List<Method> beforeMethods = ReflectionUtils.getAnnotatedMethod(clazz, Before.class);
             List<Method> afterMethods = ReflectionUtils.getAnnotatedMethod(clazz, After.class);
 
-            runBeforeMethods(beforeMethods, clazz);
-            var testResults = runTestMethods(testMethods, clazz);
-            runAfterMethods(afterMethods, clazz);
+            Function<Function<Method, SingleTestResult>, Function<Method, SingleTestResult>> testMethodsWithBeforeAfter
+                    = (testMethod) -> testMethod;
+
+            var testResults = runTestMethods(testMethods, clazz, beforeMethods, afterMethods);
 
             return new TestsResults(
                     clazz.getName(),
@@ -59,8 +62,8 @@ public class TestRunner {
         }
     }
 
-    private void runBeforeMethods(List<Method> beforeMethods, Class<?> clazz) {
-        beforeMethods.forEach(it -> runBeforeMethod(it, ReflectionUtils.getNewInstance(clazz)));
+    private void runBeforeMethods(List<Method> beforeMethods, Object instance) {
+        beforeMethods.forEach(it -> runBeforeMethod(it, instance));
     }
 
     @SneakyThrows
@@ -68,10 +71,19 @@ public class TestRunner {
         beforeMethod.invoke(instance);
     }
 
-    public List<SingleTestResult> runTestMethods(List<Method> testMethods, Class<?> clazz) {
+    public List<SingleTestResult> runTestMethods(List<Method> testMethods,
+                                                 Class<?> clazz,
+                                                 List<Method> beforeMethods,
+                                                 List<Method> afterMethods) {
         return testMethods
                 .stream()
-                .map(it -> runTestMethod(ReflectionUtils.getNewInstance(clazz), it))
+                .map(it -> {
+                    Object instance = ReflectionUtils.getNewInstance(clazz);
+                    runBeforeMethods(beforeMethods, instance);
+                    var result =  runTestMethod(instance, it);
+                    runAfterMethods(afterMethods, instance);
+                    return result;
+                })
                 .toList();
     }
 
@@ -89,8 +101,8 @@ public class TestRunner {
         return result;
     }
 
-    public void runAfterMethods(List<Method> afterMethods, Class<?> clazz) {
-        afterMethods.forEach(it -> runAfterMethod(it, ReflectionUtils.getNewInstance(clazz)));
+    public void runAfterMethods(List<Method> afterMethods, Object instance) {
+        afterMethods.forEach(it -> runAfterMethod(it, instance));
     }
 
     @SneakyThrows
