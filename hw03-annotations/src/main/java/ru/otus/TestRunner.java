@@ -16,8 +16,6 @@ import ru.otus.util.ReflectionUtils;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class TestRunner {
 
@@ -44,9 +42,6 @@ public class TestRunner {
             List<Method> testMethods = ReflectionUtils.getAnnotatedMethod(clazz, Test.class);
             List<Method> beforeMethods = ReflectionUtils.getAnnotatedMethod(clazz, Before.class);
             List<Method> afterMethods = ReflectionUtils.getAnnotatedMethod(clazz, After.class);
-
-            Function<Function<Method, SingleTestResult>, Function<Method, SingleTestResult>> testMethodsWithBeforeAfter
-                    = (testMethod) -> testMethod;
 
             var testResults = runTestMethods(testMethods, clazz, beforeMethods, afterMethods);
 
@@ -80,7 +75,7 @@ public class TestRunner {
                 .map(it -> {
                     Object instance = ReflectionUtils.getNewInstance(clazz);
                     runBeforeMethods(beforeMethods, instance);
-                    var result =  runTestMethod(instance, it);
+                    var result = runTestMethod(instance, it);
                     runAfterMethods(afterMethods, instance);
                     return result;
                 })
