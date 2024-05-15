@@ -1,16 +1,16 @@
 package homework;
 
-@SuppressWarnings({"java:S1135"}) // при выполнении ДЗ эту аннотацию надо удалить
-public class Customer {
-    private final long id;
-    private String name;
-    private long scores;
+import java.util.HashMap;
+import java.util.Map;
 
-    // todo: 1. в этом классе надо исправить ошибки
+public class Customer implements Cloneable{
+    private final long id;
+    private static final Map<Long, String> name = new HashMap<>();
+    private long scores;
 
     public Customer(long id, String name, long scores) {
         this.id = id;
-        this.name = name;
+        Customer.name.put(id, name);
         this.scores = scores;
     }
 
@@ -19,11 +19,11 @@ public class Customer {
     }
 
     public String getName() {
-        return name;
+        return name.get(this.id);
     }
 
     public void setName(String name) {
-        this.name = name;
+        Customer.name.put(this.id, name);
     }
 
     public long getScores() {
@@ -36,7 +36,7 @@ public class Customer {
 
     @Override
     public String toString() {
-        return "Customer{" + "id=" + id + ", name='" + name + '\'' + ", scores=" + scores + '}';
+        return "Customer{" + "id=" + id + ", name='" + name.get(this.id) + '\'' + ", scores=" + scores + '}';
     }
 
     @Override
@@ -46,16 +46,16 @@ public class Customer {
 
         Customer customer = (Customer) o;
 
-        if (id != customer.id) return false;
-        if (scores != customer.scores) return false;
-        return name != null ? name.equals(customer.name) : customer.name == null;
+        return id == customer.id;
+    }
+
+    @Override
+    protected Customer clone() throws CloneNotSupportedException {
+        return (Customer) super.clone();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (int) (scores ^ (scores >>> 32));
-        return result;
+        return (int) (id ^ (id >>> 32));
     }
 }
